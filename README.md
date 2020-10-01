@@ -15,5 +15,5 @@ Running test:
 
 - To Build and push to local Docker desktop:
       
-     docker-compose build
-     docker-compose up
+     - docker-compose build
+     - docker-compose up
