@@ -7,6 +7,9 @@ Containers:
 - MongoDB - standard Mongo offical container
 - reverse_proxy - Nginx server performing reverse proxy role
 
+![Image of containers]
+(https://github.com/sai-x-focaloid/mevn-todo-demo/MEVN-test-case.png)
+
 Setup:
 - Clone the code
 - Install build and dev dependencies
