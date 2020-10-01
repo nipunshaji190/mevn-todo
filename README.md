@@ -7,8 +7,7 @@ Containers:
 - MongoDB - standard Mongo offical container
 - reverse_proxy - Nginx server performing reverse proxy role
 
-![Image of containers]
-(MEVN-test-case.png)
+![Image of containers](MEVN-test-case.png)
 
 Setup:
 - Clone the code
