@@ -8,7 +8,7 @@ Containers:
 - reverse_proxy - Nginx server performing reverse proxy role
 
 ![Image of containers]
-(https://github.com/sai-x-focaloid/mevn-todo-demo/MEVN-test-case.png)
+(MEVN-test-case.png)
 
 Setup:
 - Clone the code
