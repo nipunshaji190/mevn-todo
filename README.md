@@ -13,7 +13,18 @@ Setup:
 
 Running test:
 
-- To Build and push to local Docker desktop:
+- Build and push to local Docker desktop:
       
-     - docker-compose build
-     - docker-compose up
+  - docker-compose build
+  - docker-compose up
+  
+Then run the test:
+
+  - This is a quick smoke test, checks the full CRUD operations 
+  by creating, reading, updating and deleting 4 todo items.
+
+    cd client
+    
+    // run the Cypress app from the commandline ->
+    
+    ./node_modules/.bin/cypress open
