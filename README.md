@@ -7,6 +7,11 @@ Containers:
 - MongoDB - standard Mongo offical container
 - reverse_proxy - Nginx server performing reverse proxy role
 
+
+![containers](MEVN-test-case.png)
+
+
+
 Setup:
 - Clone the code
 - Install build and dev dependencies
@@ -20,7 +25,9 @@ Running test:
   
 Then run the test:
 
-  - This is a quick smoke test, checks the full CRUD operations 
+  - run completeFourSteps.js in the Cypress app
+  
+  This is a quick smoke test, checks the full CRUD operations 
   by creating, reading, updating and deleting 4 todo items.
 
     cd client
