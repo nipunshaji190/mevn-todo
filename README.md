@@ -22,7 +22,9 @@ Running test:
   
 Then run the test:
 
-  - This is a quick smoke test, checks the full CRUD operations 
+  - run completeFourSteps.js in the Cypress app
+  
+  This is a quick smoke test, checks the full CRUD operations 
   by creating, reading, updating and deleting 4 todo items.
 
     cd client
