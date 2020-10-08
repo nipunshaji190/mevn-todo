@@ -13,22 +13,18 @@ services:
       - 80:80
 
   vue_client:
+    image: nipunshaji190/vue_client:test-ubuntu
     build: ./client
-    command: bash -c "npm install && npm run dev"
-    volumes:
-      - /app/node_modules
-      - ./client:/app
-    ports:
-      - '3000:3000'
+    # command: bash -c "npm install && npm run dev"
     environment:
       HOST: 0.0.0.0
+    ports:
+      - '3000:3000'
 
   node_server:
+    image: nipunshaji190/node_server:test-ubuntu
     build: ./server
-    command: bash -c "npm install && npm run serve"
-    volumes:
-      - /app/node_modules
-      - ./server:/app
+    # command: bash -c "npm install && npm run serve"
     environment:
       - DB_URL=mongodb://mongo:27017/tododb
     ports:
