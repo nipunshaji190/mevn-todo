@@ -6,19 +6,13 @@ RUN apt-get -y install curl gnupg
 
 RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
 
-RUN apt-get -y install nodejs
-
-RUN node -v
-
-RUN npm -v
+RUN apt-get -y install nodejs && node -v && npm -v 
 
 WORKDIR /app
 
 COPY package*.json ./
-
+RUN npm install
 COPY . .
 
-VOLUME /app/node_modules
-VOLUME ./server:/app
 EXPOSE 9000
-CMD [ "bash", "-c", "npm install && npm run serve" ]
+CMD [ "node", "server.js"]

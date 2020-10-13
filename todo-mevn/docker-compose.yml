@@ -11,30 +11,40 @@ services:
       - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
+    networks:
+      - my-network
 
   vue_client:
     image: nipunshaji190/vue_client:test-ubuntu
     build: ./client
-    # command: bash -c "npm install && npm run dev"
+    # image: nipunshaji190/vue_client.slim:latest
     environment:
       HOST: 0.0.0.0
     ports:
       - '3000:3000'
+    networks:
+      - my-network
 
   node_server:
     image: nipunshaji190/node_server:test-ubuntu
     build: ./server
-    # command: bash -c "npm install && npm run serve"
+    # image: nipunshaji190/node_server.slim:latest
     environment:
-      - DB_URL=mongodb://mongo:27017/tododb
+      - DB_URL=mongodb+srv://root:toor@cluster0.51apq.mongodb.net/tododb?retryWrites=true&w=majority
     ports:
       - '9000:9000'
-    depends_on:
-      - mongo
+    networks: 
+      - my-network
+    # depends_on:
+    #   - mongo
 
-  mongo:
-    image: mongo
-    volumes:
-      - ./tmp/data:/data/db
-    ports:
-      - '27017:27017'
+  # mongo:
+  #   image: mongo
+  #   volumes:
+  #     - ./tmp/data:/data/db
+  #   ports:
+  #     - '27017:27017'
+  
+networks:
+  my-network:
+    driver: bridge

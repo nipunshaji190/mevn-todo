@@ -1,26 +1,12 @@
-FROM ubuntu:18.04
-
-USER root
-
-RUN apt update
-
-RUN apt-get -y install curl gnupg
-
-RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
-
-RUN apt-get -y install nodejs
-
-RUN node -v
-
-RUN npm -v
+FROM node:12.16.0-buster
 
 WORKDIR /app
 
 COPY package*.json ./
-
+RUN npm install
 COPY . .
+RUN npm run buildx
 
 EXPOSE 3000
-VOLUME /app/node_modules
-VOLUME ./client:/app
-CMD [ "bash", "-c", "npm install && npm run dev" ]
+
+CMD ["./node_modules/.bin/nuxt", "start", "--hostname", "0.0.0.0"]
