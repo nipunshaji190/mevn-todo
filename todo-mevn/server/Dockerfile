@@ -1,12 +1,5 @@
-FROM ubuntu:18.04
 
-RUN apt update
-
-RUN apt-get -y install curl gnupg
-
-RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
-
-RUN apt-get -y install nodejs && node -v && npm -v 
+FROM node:12.16.0-buster
 
 WORKDIR /app
 
@@ -15,4 +8,5 @@ RUN npm install
 COPY . .
 
 EXPOSE 9000
-CMD [ "node", "server.js"]
+
+CMD [ "node", "server.js" ]

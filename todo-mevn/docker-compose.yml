@@ -15,20 +15,20 @@ services:
       - my-network
 
   vue_client:
-    image: nipunshaji190/vue_client:test-ubuntu
+    image: nipunshaji190/vue_client:test
     build: ./client
     # image: nipunshaji190/vue_client.slim:latest
-    environment:
-      HOST: 0.0.0.0
+    # image: nipunshaji190/vue_client:test-slim
     ports:
       - '3000:3000'
     networks:
       - my-network
 
   node_server:
-    image: nipunshaji190/node_server:test-ubuntu
+    image: nipunshaji190/node_server:test
     build: ./server
     # image: nipunshaji190/node_server.slim:latest
+    # image: nipunshaji190/node_server:test-slim
     environment:
       - DB_URL=mongodb+srv://root:toor@cluster0.51apq.mongodb.net/tododb?retryWrites=true&w=majority
     ports:

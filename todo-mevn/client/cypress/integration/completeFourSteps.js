@@ -1,15 +1,15 @@
 describe("Test Add 4 todos page", () => {
   //
-  // This is a quick smoke test, checks the full CRUD operations 
+  // This is a quick smoke test, checks the full CRUD operations
   // by creating, reading, updating and deleting 4 todo items.
   // run the Cypress app from the commandline ->   ./node_modules/.bin/cypress open
   //
   it("Should be able to create 4 steps, check as completed, delete all 4", () => {
    cy.visit("http://localhost/")
-   cy.get('#input-34').type('Step 1{enter}')
-   cy.get('#input-34').type('Step 2{enter}')
-   cy.get('#input-34').type('Step 3{enter}')
-   cy.get('#input-34').type('Step 4{enter}')
+   cy.get('#input-32').type('Step 1{enter}')
+   cy.get('#input-32').type('Step 2{enter}')
+   cy.get('#input-32').type('Step 3{enter}')
+   cy.get('#input-32').type('Step 4{enter}')
 
    cy.get('.v-card > .v-list > :nth-child(1) > .v-list-item__content > .v-list-item__title').should('have.text', 'Step 1')
    cy.get('.v-card > .v-list > :nth-child(2) > .v-list-item__content > .v-list-item__title').should('have.text', 'Step 2')
