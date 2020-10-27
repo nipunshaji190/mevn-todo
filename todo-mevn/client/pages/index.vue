@@ -53,11 +53,18 @@
 
 <script>
 export default {
+
+
+
   data: () => ({
     todoText: '',
     complete: false,
     items: [],
-    apiUrlBase: 'http://localhost:9000/api',
+    apiUrlBase:  (process.browser)
+                   ? (location.origin.split(":")[1] === "//localhost")
+                       ? 'http://localhost:9000/api'
+                       : location.origin.split(":")[0]+":"+location.origin.split(":")[1]+"/api"
+                   : 'http://localhost:9000/api' ,
   }),
   mounted() {
     this.getTodoList()
@@ -114,6 +121,7 @@ export default {
     },
     async getTodoList() {
       console.log('getTodoList')
+      console.log("base url",this.apiUrlBase)
       const url = this.apiUrlBase + '/'
       try {
         const result = await this.$axios.$get(url)
