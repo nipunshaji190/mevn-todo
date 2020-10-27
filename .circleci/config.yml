@@ -19,9 +19,6 @@ jobs:
     working_directory: ~/todo-mevn
     docker:
     - image: circleci/python:3.8  
-    aws-access-key-id: $AWS_ACCESS_KEY_ID
-    aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
-    aws-region: $AWS_REGION 
     steps: 
     - run: sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
     - run: sudo chmod +x /usr/local/bin/ecs-cli
