@@ -1,50 +1,25 @@
 version: '3'
 services:
-  # Proxy to internal services
-  reverse-proxy:
-    image: nginx:1.17.10
-    container_name: reverse_proxy
-    depends_on:
-      - vue_client
-      - node_server
-    volumes:
-      - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - 80:80
-    networks:
-      - my-network
-
-  vue_client:
-    image: nipunshaji190/vue_client:test
-    build: ./client
-    # image: nipunshaji190/vue_client.slim:latest
-    # image: nipunshaji190/vue_client:test-slim
-    ports:
-      - '3000:3000'
-    networks:
-      - my-network
-
   node_server:
-    image: nipunshaji190/node_server:test
+    image: njames92/todo-mevn_node_server:latest
     build: ./server
-    # image: nipunshaji190/node_server.slim:latest
-    # image: nipunshaji190/node_server:test-slim
     environment:
       - DB_URL=mongodb+srv://root:toor@cluster0.51apq.mongodb.net/tododb?retryWrites=true&w=majority
     ports:
       - '9000:9000'
-    networks: 
-      - my-network
-    # depends_on:
-    #   - mongo
-
-  # mongo:
-  #   image: mongo
-  #   volumes:
-  #     - ./tmp/data:/data/db
-  #   ports:
-  #     - '27017:27017'
-  
-networks:
-  my-network:
-    driver: bridge
+  vue_client:
+    image: njames92/todo-mevn_vue_client:latest   
+    build: ./client
+    depends_on:
+      - node_server
+    ports:
+      - '3000:3000'
+  reverse-proxy:
+    image: njames92/reverse_proxy:latest
+    build: ./reverse_proxy
+    container_name: reverse_proxy
+    depends_on:
+      - vue_client
+      - node_server
+    ports:
+      - 80:80
