@@ -20,13 +20,14 @@ jobs:
     docker:
     - image: circleci/python:3.8  
     steps: 
+    - checkout
+    - setup_remote_docker    
     - run: sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
     - run: sudo chmod +x /usr/local/bin/ecs-cli
     - run: ecs-cli configure profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY --profile-name my-ecs-admin
-    - run: ls -l 
-    # - run: ecs-cli compose --file ./todo-mevn/docker-compose.yml  --project-name main service up --create-log-groups --cluster-config main --ecs-profile my-ecs-admin --force-deployment
-    # - run: sleep 200
-    # - run: curl http://3.236.155.146
+    - run: ecs-cli compose --file ./todo-mevn/docker-compose.yml  --project-name main service up --create-log-groups --cluster-config main --ecs-profile my-ecs-admin --force-deployment
+    - run: sleep 200
+    - run: curl http://3.236.155.146
 workflows:
   main:
     jobs:
