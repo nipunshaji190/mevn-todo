@@ -12,7 +12,7 @@ jobs:
     - run: pwd
     - run: ls -l
     # - run: sudo apt install nodejs npm
-  #   - run: sudo npm install --unsafe-perm=true --allow-root cypress
+  #   - run: sudo npm install --unsafe-perm=true --allow-root cypress 
   #   - run: docker-compose -d -f ./todo-mevn/docker-compose.yml up
   #   - run: sleep 10
   update-service-ecs-service:
@@ -23,7 +23,7 @@ jobs:
     - run: sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
     - run: sudo chmod +x /usr/local/bin/ecs-cli
     - run: ecs-cli configure profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY --profile-name my-ecs-admin
-    - run: ecs-cli compose --project-name main service up --create-log-groups --cluster-config main --ecs-profile my-ecs-admin --force-deployment
+    - run: ecs-cli compose --file ./todo-mevn/docker-compose.yml  --project-name main service up --create-log-groups --cluster-config main --ecs-profile my-ecs-admin --force-deployment
     - run: sleep 200
     - run: curl http://3.236.155.146
 workflows:
