@@ -1,40 +1,42 @@
-version: 2.1  
-description: "a sample Todo project"
-
+version: 2.1
+orbs:
+  aws-ecs: circleci/aws-ecs@1.3.0
+jobs:
+  Build-And-Push-Docker-Image-To-DockerHub:
+    working_directory: ~/todo-mevn
+    docker:
+    - image: circleci/python:3.8
+    steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+          name: Install Docker Compose
+          command: |
+            sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+    - run:
+          name: Docker Compose build and Push Images
+          command: |
+              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+              cd todo-mevn && docker-compose build && docker-compose push
+  Update-service-ecs-service:
+    working_directory: ~/todo-mevn
+    docker:
+    - image: circleci/python:3.8  
+    steps: 
+    - checkout
+    - setup_remote_docker    
+    - run: sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+    - run: sudo chmod +x /usr/local/bin/ecs-cli
+    - run: ecs-cli configure profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY --profile-name my-ecs-admin
+    - run: ecs-cli configure --cluster todo-main --default-launch-type FARGATE --config-name todo-main --region $AWS_REGION
+    - run: cd todo-mevn && ecs-cli compose --project-name todo-main service up --create-log-groups --cluster-config todo-main --ecs-profile my-ecs-admin --force-deployment
+    - run: sleep 30
+    - run: echo $(ecs-cli ps --cluster todo-main --ecs-profile my-ecs-admin | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | head -1)
 workflows:
-  slim_and_push:
+  main:
     jobs:
-      - Build-And-Push-Docker-Image-To-DockerHub:
-          working_directory: ~/todo-mevn
-          docker:
-           - image: circleci/python:3.8
-          steps:
-          - checkout
-          - setup_remote_docker
-          - run:
-                name: Install Docker Compose
-                command: |
-                  sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                  sudo chmod +x /usr/local/bin/docker-compose
-          - run:
-              name: Docker Compose build and Push Images
-              command: |
-                  echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                  cd todo-mevn && docker-compose build && docker-compose push
+      - Build-And-Push-Docker-Image-To-DockerHub
       - Update-service-ecs-service:
           requires:
-             - Build-And-Push-Docker-Image-To-DockerHub
-          working_directory: ~/todo-mevn
-          docker:
-           - image: circleci/python:3.8
-          steps:
-          - checkout
-          - setup_remote_docker
-          - run: sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
-          - run: sudo chmod +x /usr/local/bin/ecs-cli
-          - run: ecs-cli configure profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY --profile-name my-ecs-admin
-          - run: ecs-cli configure --cluster todo-main --default-launch-type FARGATE --config-name todo-main --region $AWS_REGION
-          - run: cd todo-mevn && ecs-cli compose --project-name todo-main service up --create-log-groups --cluster-config todo-main --ecs-profile my-ecs-admin --force-deployment
-          - run: sleep 30
-          - run: echo $(ecs-cli ps --cluster todo-main --ecs-profile my-ecs-admin | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | head -1)
-        
+          - Build-And-Push-Docker-Image-To-DockerHub
