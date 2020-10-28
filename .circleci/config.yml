@@ -33,7 +33,7 @@ jobs:
     # - run: cd todo-mevn && ecs-cli compose --project-name todo-main service up --create-log-groups --cluster-config todo-main --ecs-profile my-ecs-admin --force-deployment
     # - run: sleep 20
     - run: export CYPRESS_CLIENT_URL=$(ecs-cli ps --cluster todo-main --ecs-profile my-ecs-admin | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | head -1)
-    - run: sudo apt install nodejs npm
+    - run: sudo apt install nodejs npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
     - run: sudo npm install --unsafe-perm=true --allow-root -g cypress
     - run: cypress install
     - run: cd todo-mevn/client && cypress run --headless --spec "cypress/integration/completeFourSteps.js"
