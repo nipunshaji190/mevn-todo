@@ -1,21 +1,26 @@
+
 version: '3'
 services:
   node_server:
-    image: njames92/todo-mevn_node_server:latest
+    image: nipunshaji190/node_server:test
     build: ./server
+    # image: nipunshaji190/node_server.slim:latest
+    # image: nipunshaji190/node_server:test-slim
     environment:
       - DB_URL=mongodb+srv://root:toor@cluster0.51apq.mongodb.net/tododb?retryWrites=true&w=majority
     ports:
       - '9000:9000'
   vue_client:
-    image: njames92/todo-mevn_vue_client:latest   
+    image: nipunshaji190/vue_client:test
     build: ./client
+    # image: nipunshaji190/vue_client.slim:latest
+    # image: nipunshaji190/vue_client:test-slim
     depends_on:
       - node_server
     ports:
       - '3000:3000'
   reverse-proxy:
-    image: njames92/reverse_proxy:latest
+    image: nipunshaji190/reverse_proxy:latest
     build: ./reverse_proxy
     container_name: reverse_proxy
     depends_on:
