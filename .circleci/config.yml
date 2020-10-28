@@ -20,6 +20,8 @@ jobs:
               echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
               cd todo-mevn && docker-compose build && docker-compose push
   Update-service-ecs-service:
+    requires:
+      - Build-And-Push-Docker-Image-To-DockerHub
     working_directory: ~/todo-mevn
     docker:
     - image: circleci/python:3.8  
