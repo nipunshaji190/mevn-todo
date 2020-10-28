@@ -5,7 +5,7 @@ describe("Test Add 4 todos page", () => {
   // run the Cypress app from the commandline ->   ./node_modules/.bin/cypress open
   //
   it("Should be able to create 4 steps, check as completed, delete all 4", () => {
-   cy.visit("http://localhost/")
+   cy.visit(Cypress.env('CLIENT_URL'))
    cy.get('#input-32').type('Step 1{enter}')
    cy.get('#input-32').type('Step 2{enter}')
    cy.get('#input-32').type('Step 3{enter}')
