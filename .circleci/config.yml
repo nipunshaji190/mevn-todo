@@ -1,14 +1,71 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-# Use a package of configuration called an orb.
+
 orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+  slim: slimai-dev/slim@dev:compose
+
+jobs:
+  Build-And-Push-Docker-Image-To-DockerHub:
+    working_directory: ~/todo-mevn
+    docker:
+    - image: circleci/python:3.8
+    steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+          name: Install Docker Compose
+          command: |
+            sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+    - run:
+          name: Docker Compose build and Push Images
+          command: |
+              echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+              cd todo-mevn && docker-compose build && docker-compose push
+  Update-service-ecs-service:
+    working_directory: ~/todo-mevn
+    docker:
+    - image: circleci/python:3.8  
+    steps: 
+    - checkout
+    - setup_remote_docker    
+    - run: sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+    - run: sudo chmod +x /usr/local/bin/ecs-cli
+    - run:
+        name: Setup Environment Variables for ecs-params
+        command: |
+          echo "export SUBNET1=$MAIN_SUBNET1" >> $BASH_ENV
+          echo "export SUBNET2=$MAIN_SUBNET2" >> $BASH_ENV
+          echo "export SG=$MAIN_SG" >> $BASH_ENV     
+    - run: ecs-cli configure profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY --profile-name $ECS_PROFILE
+    - run: ecs-cli configure --cluster $MAIN_CLUSTER --default-launch-type FARGATE --config-name $MAIN_CONFIG_NAME --region $AWS_REGION
+    - run: cd todo-mevn && ecs-cli compose --project-name $MAIN_PROJECT_NAME service up --create-log-groups --cluster-config $MAIN_CLUSTER_CONFIG --ecs-profile $ECS_PROFILE --force-deployment
+    - run: sleep 20
+    - run:
+        name: Setup Environment Variables
+        command: |
+          echo "export CYPRESS_CLIENT_URL=$(ecs-cli ps --cluster $MAIN_CLUSTER --ecs-profile $ECS_PROFILE | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | head -1)" >> $BASH_ENV 
+    - run: echo $CYPRESS_CLIENT_URL
+    - run: sudo apt install nodejs npm libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+    - run: sudo npm install --unsafe-perm=true --allow-root -g cypress
+    - run: cypress install
+    - run: cd todo-mevn/client && cypress run --headless --spec "cypress/integration/completeFourSteps.js"
+  
+
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+    welcome:
     jobs:
-      - welcome/run
+      - Build-And-Push-Docker-Image-To-DockerHub
+      - Update-service-ecs-service:
+          requires:
+            - Build-And-Push-Docker-Image-To-DockerHub
+      - slim/compose-slim:
+          requires:
+            - Update-service-ecs-service
+          dockerhub-username: $DOCKER_USERNAME
+          dockerhub-password: $DOCKER_PASSWORD
+          slim-ai-username: $SLIM_USERNAME
+          slim-ai-token: $SLIM_TOKEN
+          slim-ai-org-id: $SLIM_ORG_ID
+          images: nipunshaji190/vue_client:test,nipunshaji190/node_server:test
+          docker-compose-path: ./todo-mevn/docker-compose.yml
 
