@@ -53,7 +53,7 @@ jobs:
   
 
 workflows:
-  welcome:
+  compose-slim:
     jobs:
 #       - Build-And-Push-Docker-Image-To-DockerHub
 #       - Update-service-ecs-service:
