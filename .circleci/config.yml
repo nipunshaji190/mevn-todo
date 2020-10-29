@@ -55,13 +55,13 @@ jobs:
 workflows:
   compose-slim:
     jobs:
-#       - Build-And-Push-Docker-Image-To-DockerHub
-#       - Update-service-ecs-service:
-#           requires:
-#             - Build-And-Push-Docker-Image-To-DockerHub
+      - Build-And-Push-Docker-Image-To-DockerHub
+      - Update-service-ecs-service:
+          requires:
+            - Build-And-Push-Docker-Image-To-DockerHub
       - slim/compose-slim:
-#           requires:
-#             - Update-service-ecs-service
+          requires:
+            - Update-service-ecs-service
           dockerhub-username: $DOCKER_USERNAME
           dockerhub-password: $DOCKER_PASSWORD
           slim-ai-username: $SLIM_USERNAME
